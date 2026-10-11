@@ -5,7 +5,22 @@
 import subprocess
 import time
 
-router = "192.168.0.1" # Change to current Router IPv4 address
+router = None
+
+found = subprocess.run(
+	["ip", "route"],
+	capture_output=True,
+	text=True
+)
+
+for line in found.stdout.splitlines():
+	if line.startswith("default via"):
+		section = line.split()
+		router = section[2]
+
+
+if router is None:
+	print("No default gateway found")
 
 print("Gathering...")
 
